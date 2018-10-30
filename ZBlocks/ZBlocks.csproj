@@ -88,6 +88,10 @@
       <Project>{6c214697-7dfc-4d42-8bf3-8da28e6e6603}</Project>
       <Name>ZControl</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ZTools\ZTools.csproj">
+      <Project>{83bd2382-9fb3-43c9-8e92-783fd5e57c35}</Project>
+      <Name>ZTools</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

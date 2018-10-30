@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2042
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZPlugins", "ZPlugins\ZPlugins.csproj", "{44E75339-1D07-4FAB-88EF-6A2784D3E51C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZPlugins", "ZPlugins\ZPlugins.csproj", "{05A698A2-0520-4DF7-99D9-B24C6BA605EB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZControl", "ZControl\ZControl.csproj", "{6C214697-7DFC-4D42-8BF3-8DA28E6E6603}"
 EndProject
@@ -19,10 +19,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{44E75339-1D07-4FAB-88EF-6A2784D3E51C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{44E75339-1D07-4FAB-88EF-6A2784D3E51C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{44E75339-1D07-4FAB-88EF-6A2784D3E51C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{44E75339-1D07-4FAB-88EF-6A2784D3E51C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05A698A2-0520-4DF7-99D9-B24C6BA605EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05A698A2-0520-4DF7-99D9-B24C6BA605EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05A698A2-0520-4DF7-99D9-B24C6BA605EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05A698A2-0520-4DF7-99D9-B24C6BA605EB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6C214697-7DFC-4D42-8BF3-8DA28E6E6603}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6C214697-7DFC-4D42-8BF3-8DA28E6E6603}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6C214697-7DFC-4D42-8BF3-8DA28E6E6603}.Release|Any CPU.ActiveCfg = Release|Any CPU

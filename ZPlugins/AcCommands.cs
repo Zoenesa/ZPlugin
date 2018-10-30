@@ -73,10 +73,6 @@ namespace AcZPlugins
                     for (int j = 0; j < (int)files.Length; j++)
                     {
                         string str = files[j];
-                        if (str == "AcZPointControls.dll")
-                        {
-                            continue;
-                        }
                         ListAssemblyName.Add(str);
                     }
                 }

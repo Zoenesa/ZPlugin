@@ -32,7 +32,7 @@ public class BlockATPOINT
         this._document = document;
         this.database = document.Database;
         this._dataTable = new System.Data.DataTable();
-        this._dataTable.Columns.Add("ObjedID", typeof(string));
+        this._dataTable.Columns.Add("ObjectID", typeof(string));
         this._dataTable.Columns.Add("BRefName", typeof(string));
         this._dataTable.Columns.Add("Type", typeof(string));
         this._dataTable.Columns.Add("AttRef", typeof(string));

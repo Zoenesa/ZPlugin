@@ -21,10 +21,11 @@
             this.radButtonDeleteBlocks = new Telerik.WinControls.UI.RadButton();
             this.radButtonZoomSelections = new Telerik.WinControls.UI.RadButton();
             this.radDropDownButtonSelectionList = new Telerik.WinControls.UI.RadDropDownButton();
-            this.radCheckedListBlocks = new Telerik.WinControls.UI.RadCheckedListBox();
-            this.radStatusStrip = new Telerik.WinControls.UI.RadStatusStrip();
             this.radMenuItemCek = new Telerik.WinControls.UI.RadMenuItem();
             this.radMenuItemUncek = new Telerik.WinControls.UI.RadMenuItem();
+            this.radCheckedListBlocks = new Telerik.WinControls.UI.RadCheckedListBox();
+            this.radStatusStrip = new Telerik.WinControls.UI.RadStatusStrip();
+            this.radMenuUncekSelected = new Telerik.WinControls.UI.RadMenuItem();
             this.tableLayout.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.radTextSearchBlocks)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.radLblSearch)).BeginInit();
@@ -163,12 +164,25 @@
             this.tableLayout.SetColumnSpan(this.radDropDownButtonSelectionList, 2);
             this.radDropDownButtonSelectionList.Items.AddRange(new Telerik.WinControls.RadItem[] {
             this.radMenuItemCek,
-            this.radMenuItemUncek});
+            this.radMenuItemUncek,
+            this.radMenuUncekSelected});
             this.radDropDownButtonSelectionList.Location = new System.Drawing.Point(3, 286);
             this.radDropDownButtonSelectionList.Name = "radDropDownButtonSelectionList";
             this.radDropDownButtonSelectionList.Size = new System.Drawing.Size(142, 23);
             this.radDropDownButtonSelectionList.TabIndex = 5;
             this.radDropDownButtonSelectionList.Text = "Selection List";
+            // 
+            // radMenuItemCek
+            // 
+            this.radMenuItemCek.Name = "radMenuItemCek";
+            this.radMenuItemCek.Text = "Check &All";
+            this.radMenuItemCek.Click += new System.EventHandler(this.radMenuItemCek_Click);
+            // 
+            // radMenuItemUncek
+            // 
+            this.radMenuItemUncek.Name = "radMenuItemUncek";
+            this.radMenuItemUncek.Text = "&Uncheck All";
+            this.radMenuItemUncek.Click += new System.EventHandler(this.radMenuItemUncek_Click);
             // 
             // radCheckedListBlocks
             // 
@@ -177,10 +191,12 @@
             this.radCheckedListBlocks.GroupItemSize = new System.Drawing.Size(200, 28);
             this.radCheckedListBlocks.ItemSize = new System.Drawing.Size(200, 28);
             this.radCheckedListBlocks.Location = new System.Drawing.Point(3, 32);
+            this.radCheckedListBlocks.MultiSelect = true;
             this.radCheckedListBlocks.Name = "radCheckedListBlocks";
             this.tableLayout.SetRowSpan(this.radCheckedListBlocks, 2);
             this.radCheckedListBlocks.Size = new System.Drawing.Size(477, 248);
             this.radCheckedListBlocks.TabIndex = 6;
+            this.radCheckedListBlocks.SelectedItemChanged += new System.EventHandler(this.radCheckedListBlocks_SelectedItemChanged);
             // 
             // radStatusStrip
             // 
@@ -193,15 +209,11 @@
             this.radStatusStrip.SizingGrip = false;
             this.radStatusStrip.TabIndex = 1;
             // 
-            // radMenuItemCek
+            // radMenuUncekSelected
             // 
-            this.radMenuItemCek.Name = "radMenuItemCek";
-            this.radMenuItemCek.Text = "Check &All";
-            // 
-            // radMenuItemUncek
-            // 
-            this.radMenuItemUncek.Name = "radMenuItemUncek";
-            this.radMenuItemUncek.Text = "&Uncheck All";
+            this.radMenuUncekSelected.Name = "radMenuUncekSelected";
+            this.radMenuUncekSelected.Text = "Uncheck &Selected Items";
+            this.radMenuUncekSelected.Click += new System.EventHandler(this.radMenuUncekSelected_Click);
             // 
             // formBlocksCollections
             // 
@@ -246,5 +258,6 @@
         private Telerik.WinControls.UI.RadCheckedListBox radCheckedListBlocks;
         private Telerik.WinControls.UI.RadMenuItem radMenuItemCek;
         private Telerik.WinControls.UI.RadMenuItem radMenuItemUncek;
+        private Telerik.WinControls.UI.RadMenuItem radMenuUncekSelected;
     }
 }

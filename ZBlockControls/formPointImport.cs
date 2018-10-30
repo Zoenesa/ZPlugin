@@ -37,9 +37,13 @@ namespace ZPointControls
 
         void document_Changed(object sender, AcAp.DocumentCollectionEventArgs e)
         {
-            this.document = e.Document;
             string str = "Import Survey Point: ";
-            this.Text = string.Format("{0} - ({1})", str, e.Document.Name);
+            if (e.Document == null)
+            {
+                this.Text = str;
+                return;
+            }
+            this.document = e.Document;
         }
 
         private void radBrowseEditor_DialogClosed(object sender, Telerik.WinControls.UI.DialogClosedEventArgs e)
@@ -189,7 +193,7 @@ namespace ZPointControls
 
         private void formPointImport_Activated(object sender, EventArgs e)
         {
-            this.Text = string.Format("Import Survey Points - {0}{1}{2}", "{", this.document.Name, "}");
+            this.Text = string.Format("Import Survey Points - {0}{1}{2}", "{", System.IO.Path.GetFileName(this.document.Name), "}");
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)

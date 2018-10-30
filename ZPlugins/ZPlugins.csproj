@@ -54,21 +54,58 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Commands.cs" />
-    <Compile Include="Initialization.cs" />
+    <Compile Include="AcCommands.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="start.scr">
+    <ProjectReference Include="..\ZBlockControls\ZPointControls.csproj">
+      <Project>{04726382-e998-4535-87e5-7518b3e506a7}</Project>
+      <Name>ZPointControls</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ZBlocks\ZBlocks.csproj">
+      <Project>{b15037e6-e228-4c16-95a1-ecbf43059610}</Project>
+      <Name>ZBlocks</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="AcZScript.scr">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
+  -->
+    <Target Name="DeleteUnwantedFiles">
+    <Message Text="======= Cleaning Out User Unwanted Files =======" Importance="high" />
+    <ItemGroup>
+      <FilesToClean Include="$(OutDir)\*.xml" />
+      <FilesToClean Include="$(OutDir)\Ac*.dll" />
+      <FilesToClean Include="$(OutDir)\Ad*.dll" />
+      <FilesToClean Include="$(OutDir)\*.dwl*" />
+      <!--
+      <FilesToClean Include="$(OutDir)\Tel*.dll" />
+		<FilesToClean Include="$(OutDir)\AcCoreMgd.dll" />
+		<FilesToClean Include="$(OutDir)\AcDbMgd.dll" />
+		<FilesToClean Include="$(OutDir)\AcMgd.dll" />
+		<FilesToClean Include="$(OutDir)\AcCui.dll" />
+		<FilesToClean Include="$(OutDir)\AcTcMgd.dll" />
+		<FilesToClean Include="$(OutDir)\AdUIMgd.dll" />
+		<FilesToClean Include="$(OutDir)\AdUiPalettes.dll" />
+		<FilesToClean Include="$(OutDir)\AdWindows.dll" /> 
+    Bit of .Net to get all folders and subfolders 
+		<FoldersToClean Include="$([System.IO.Directory]::GetDirectories(&quot;$(OutDir)&quot;))" />
+		-->
+    </ItemGroup>
+    <!-- Insert other tasks to run after build here -->
+    <Delete Files="@(FilesToClean)" />
   </Target>
   <Target Name="AfterBuild">
+    <Message Text="======= Executing User MSBuild Task AfterBuild Event =======" Importance="high" />
+    <CallTarget Targets="DeleteUnwantedFiles" />
   </Target>
-  -->
+  <Target Name="AfterRebuild">
+    <Message Text="======= Executing User MSBuild Task AfterRebuild Event =======" Importance="high" />
+    <CallTarget Targets="DeleteUnwantedFiles" />
+  </Target>
 </Project>

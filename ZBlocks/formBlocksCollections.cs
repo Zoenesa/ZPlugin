@@ -39,6 +39,7 @@ namespace ZBlocks
 
         void Init()
         {
+            this.Activated += FormBlocksCollections_Activated;
             this.radTextSearchBlocks.Text = string.Empty;
             this.radTextSearchBlocks.NullText = "Search Block";
             this.radTextSearchBlocks.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
@@ -47,6 +48,31 @@ namespace ZBlocks
 
             this.radTextSearchBlocks.ShowClearButton = true;
             this.radTextSearchBlocks.TextBoxElement.ShowClearButton = true;
+        }
+
+        private void FormBlocksCollections_Activated(object sender, EventArgs e)
+        {
+            if (this.acDoc != null && !this.acDoc.IsDisposed)
+            {
+                this.acDoc = AcAp.Application.DocumentManager.MdiActiveDocument;
+                this.Text = string.Format("Block Collections - {0}{1}{2}", "{", System.IO.Path.GetFileName(this.document.Name), "}");
+                
+                block = new BlockATPOINT(this.acDoc);
+                list_BlkRefs = new List<AcBlockReferences>();
+                list_BlkRefs = block.GetBlockReferences();
+                try
+                {
+                    string[] str = (from name in list_BlkRefs select name.Bref_Name).ToArray();
+                    radTextSearchBlocks.AutoCompleteCustomSource.AddRange(str);
+
+                    radCheckedListBlocks.DataSource = block.DataTable;
+                    radCheckedListBlocks.DisplayMember = "BrefName";
+                    radCheckedListBlocks.ValueMember = "ObjectID";
+                }
+                catch
+                {
+                }
+            }
         }
 
         private void RadCheckedListBlocks_ItemDataBound(object sender, ListViewItemEventArgs e)
@@ -70,23 +96,10 @@ namespace ZBlocks
 
         BlockATPOINT block = null;
         List<AcBlockReferences> list_BlkRefs;
+        List<ObjectId> objectIds = new List<ObjectId>();
 
         private void formBlocksCollections_Load(object sender, EventArgs e)
         {
-            block = new BlockATPOINT(this.acDoc);
-            list_BlkRefs = new List<AcBlockReferences>();
-            list_BlkRefs = block.GetBlockReferences();
-            try
-            {
-                string[] str = (from name in list_BlkRefs select name.Bref_Name).ToArray();
-                radTextSearchBlocks.AutoCompleteCustomSource.AddRange(str);
-
-                radCheckedListBlocks.DataSource = block.DataTable;
-                radCheckedListBlocks.DisplayMember = "BrefName";
-            }
-            catch
-            {
-            }
         }
 
         private void RadTextSearchBlocks_TextChanged(object sender, EventArgs e)
@@ -96,26 +109,63 @@ namespace ZBlocks
         
         private void radButtonZoomSelections_Click(object sender, EventArgs e)
         {
-            List<ObjectId> objectIds = (from bref in list_BlkRefs select bref.objectId_0).ToList();
-            List<List<ObjectId>> objectIds1 = new List<List<ObjectId>>();
-            objectIds = new List<ObjectId>();
-            foreach (ListViewDataItem item in radCheckedListBlocks.Items)
-            {
-                if (item.Selected)
-                {
-                    objectIds.InsertRange(0, (from bref in list_BlkRefs where bref.Bref_Name == item.Text select bref.objectId_0).ToList());
-                    objectIds1.Add((from bref in list_BlkRefs where bref.Bref_Name == item.Text select bref.objectId_0).ToList());
-                }
-            }
-            foreach (List<ObjectId> item in objectIds1)
-            {
+            new ZTools.ZoomTools.Zooms(this.acDoc.Editor).ZoomObjects(objectIds);
 
-            }
         }
 
         private void radButtonDeleteBlocks_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void radMenuItemCek_Click(object sender, EventArgs e)
+        {
+            if (radCheckedListBlocks.Items.Count > 0)
+            {
+                radCheckedListBlocks.CheckAllItems();
+            }
+        }
+
+        private void radMenuItemUncek_Click(object sender, EventArgs e)
+        {
+            if (radCheckedListBlocks.Items.Count > 0)
+            {
+                radCheckedListBlocks.UncheckAllItems();
+            }
+        }
+
+        private void radMenuUncekSelected_Click(object sender, EventArgs e)
+        {
+            if (radCheckedListBlocks.SelectedItems.Count > 0)
+            {
+                radCheckedListBlocks.UncheckSelectedItems();
+            }
+        }
+
+        private void radCheckedListBlocks_SelectedItemChanged(object sender, EventArgs e)
+        {
+            objectIds = ListSelectedBlocks(this.list_BlkRefs);
+        }
+
+        private List<ObjectId> ListSelectedBlocks(List<AcBlockReferences> blockReferences)
+        {
+            List<ObjectId> items = new List<ObjectId>();
+            if (radCheckedListBlocks.SelectedItems.Count > 0)
+            {
+                try
+                {
+                    foreach (ListViewDataItem item in this.radCheckedListBlocks.Items)
+                    {
+                        var obj = (ObjectId)item.Value;
+                        items.Add(obj);
+                    }
+                }
+                catch
+                {
+                    this.acDoc.Editor.WriteMessage("Failed List ObjectId");
+                }
+            }
+            return items;
         }
     }
 }
