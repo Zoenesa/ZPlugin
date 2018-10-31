@@ -11,25 +11,25 @@ public class AcBlockReferences
 
     internal string Bref_Name;
 
-    internal List<AttributeDefinition> list_0;
+    internal List<AttributeDefinition> ListAttDefs;
 
-    internal List<AcBlockAttributes> list_1;
+    internal List<AcBlockAttributes> ListBlkAtt1;
 
-    internal List<AcBlockAttributes> list_2;
+    internal List<AcBlockAttributes> ListBlkAtt2;
 
     internal AcBlockReferences(ObjectId objectId_1, string string_1, List<AttributeDefinition> list_3)
     {
         this.objectId_0 = objectId_1;
         this.Bref_Name = string_1;
-        this.list_0 = list_3;
-        this.list_1 = new List<AcBlockAttributes>();
-        this.list_2 = new List<AcBlockAttributes>();
+        this.ListAttDefs = list_3;
+        this.ListBlkAtt1 = new List<AcBlockAttributes>();
+        this.ListBlkAtt2 = new List<AcBlockAttributes>();
     }
 
     internal AttributeDefinition method_0(string string_1)
     {
         AttributeDefinition attributeDefinition = null;
-        foreach (AttributeDefinition list0 in this.list_0)
+        foreach (AttributeDefinition list0 in this.ListAttDefs)
         {
             if (!string.Equals(string_1, list0.Tag, StringComparison.InvariantCultureIgnoreCase))
             {
@@ -44,7 +44,7 @@ public class AcBlockReferences
     internal bool method_1(string string_1)
     {
         bool flag;
-        List<AttributeDefinition>.Enumerator enumerator = this.list_0.GetEnumerator();
+        List<AttributeDefinition>.Enumerator enumerator = this.ListAttDefs.GetEnumerator();
         try
         {
             while (enumerator.MoveNext())
@@ -73,14 +73,14 @@ public class AcBlockReferences
 
     private int method_3(List<AcBlockReferences> list_3, AcBlockReferences class0_0, ref int int_0)
     {
-        foreach (AcBlockAttributes list2 in class0_0.list_2)
+        foreach (AcBlockAttributes list2 in class0_0.ListBlkAtt2)
         {
-            AcBlockReferences class0 = list_3.FirstOrDefault<AcBlockReferences>((AcBlockReferences argument0) => string.Equals(argument0.Bref_Name, list2.BlockRefName));
+            AcBlockReferences class0 = list_3.FirstOrDefault<AcBlockReferences>((AcBlockReferences argument0) => string.Equals(argument0.Bref_Name, list2.BlockRefBlockName));
             if (class0 == null)
             {
                 continue;
             }
-            int_0 += class0.list_1.Count;
+            int_0 += class0.ListBlkAtt1.Count;
             this.method_3(list_3, class0, ref int_0);
         }
         return int_0;
