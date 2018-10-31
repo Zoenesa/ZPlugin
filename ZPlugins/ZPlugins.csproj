@@ -72,11 +72,16 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="SamplesDrawing.dwg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   -->
-    <Target Name="DeleteUnwantedFiles">
+  <Target Name="DeleteUnwantedFiles">
     <Message Text="======= Cleaning Out User Unwanted Files =======" Importance="high" />
     <ItemGroup>
       <FilesToClean Include="$(OutDir)\*.xml" />
