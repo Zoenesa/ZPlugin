@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using ZControl;
 using Telerik.WinControls.UI;
 using Autodesk.AutoCAD.DatabaseServices;
+using ZTools;
 
 namespace ZBlocks
 {
@@ -49,7 +50,30 @@ namespace ZBlocks
             this.radTextSearchBlocks.ShowClearButton = true;
             this.radTextSearchBlocks.TextBoxElement.ShowClearButton = true;
         }
+        private void RadCheckedListBlocks_ItemDataBound(object sender, ListViewItemEventArgs e)
+        {
+        }
 
+        void Cancel_Command()
+        {
+            this.acDoc.Editor.WriteMessage("*Cancel*\n");
+        }
+        
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == Keys.Escape | this.radTextSearchBlocks.Focused)
+            {
+                this.radTextSearchBlocks.SelectAll();
+                //Cancel_Command();
+                return true;
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        BlockATPOINT block = null;
+        List<AcBlockReferences> list_BlkRefs;
+        List<ObjectId> objectIds = new List<ObjectId>();
+        
         private void FormBlocksCollections_Activated(object sender, EventArgs e)
         {
             if (this.acDoc != null && !this.acDoc.IsDisposed)
@@ -67,7 +91,8 @@ namespace ZBlocks
 
                     radCheckedListBlocks.DataSource = block.DataTable;
                     radCheckedListBlocks.DisplayMember = "BrefName";
-                    radCheckedListBlocks.ValueMember = "ObjectID";
+                    radCheckedListBlocks.ValueMember = "AcBref";
+
                 }
                 catch
                 {
@@ -75,31 +100,20 @@ namespace ZBlocks
             }
         }
 
-        private void RadCheckedListBlocks_ItemDataBound(object sender, ListViewItemEventArgs e)
-        {
-        }
-
-        void Cancel_Command()
-        {
-            this.acDoc.Editor.WriteMessage("*Cancel*\n");
-        }
-        
-        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
-        {
-            if (keyData == Keys.Escape)
-            {
-                //Cancel_Command();
-                return true;
-            }
-            return base.ProcessCmdKey(ref msg, keyData);
-        }
-
-        BlockATPOINT block = null;
-        List<AcBlockReferences> list_BlkRefs;
-        List<ObjectId> objectIds = new List<ObjectId>();
-
         private void formBlocksCollections_Load(object sender, EventArgs e)
         {
+            if (this.acDoc != null && !this.acDoc.IsDisposed)
+            {
+                using (Transaction tr = this.acDoc.TransactionManager.StartTransaction())
+                {
+                    BlockTableRecord[] btrs
+                    = this.acDoc.Database.GetBlocksWithAttribute();
+                    
+                    List<string> btrsName = (from br in btrs select br.Name).ToList<string>();
+                    
+                }
+            }
+
         }
 
         private void RadTextSearchBlocks_TextChanged(object sender, EventArgs e)
@@ -109,8 +123,31 @@ namespace ZBlocks
         
         private void radButtonZoomSelections_Click(object sender, EventArgs e)
         {
-            new ZTools.ZoomTools.Zooms(this.acDoc.Editor).ZoomObjects(objectIds);
+            List<AcBlockReferences> list = new List<AcBlockReferences>();
+            objectIds = new List<ObjectId>();
+            try
+            {
+                foreach (ListViewDataItem item in radCheckedListBlocks.CheckedItems)
+                {
+                    AcBlockReferences br = (AcBlockReferences)item.Value;
+                    list.Add(br);
+                }
+                List<string> batts = new List<string>();
 
+                foreach (AcBlockReferences acbr in list)
+                {
+                    foreach (AcBlockAttributes attr in acbr.ListBlkAtt1)
+                    {
+                        objectIds.Add(attr.BlockRefId);
+                        batts.Add(attr.GetAttRefsTagName("ID"));
+                    }
+                }
+                new ZTools.ZoomTools.Zooms(this.acDoc.Editor).ZoomObjects(objectIds);
+            }
+            catch (Exception ex)
+            {
+                this.acDoc.Editor.WriteMessage(ex.Message + "\n");
+            }
         }
 
         private void radButtonDeleteBlocks_Click(object sender, EventArgs e)
@@ -144,7 +181,6 @@ namespace ZBlocks
 
         private void radCheckedListBlocks_SelectedItemChanged(object sender, EventArgs e)
         {
-            objectIds = ListSelectedBlocks(this.list_BlkRefs);
         }
 
         private List<ObjectId> ListSelectedBlocks(List<AcBlockReferences> blockReferences)
@@ -154,15 +190,20 @@ namespace ZBlocks
             {
                 try
                 {
-                    foreach (ListViewDataItem item in this.radCheckedListBlocks.Items)
+                    foreach (ListViewDataItem item in this.radCheckedListBlocks.SelectedItems)
                     {
-                        var obj = (ObjectId)item.Value;
-                        items.Add(obj);
+                        object obj = item.Value.ToString().Trim(new[] { '(', ')' });
+                        ObjectId id = (ObjectId)item.Value;
+                        items.Add(id);
                     }
                 }
-                catch
+                catch(Autodesk.AutoCAD.Runtime.Exception ex)
                 {
-                    this.acDoc.Editor.WriteMessage("Failed List ObjectId");
+                    this.acDoc.Editor.WriteMessage("Failed List ObjectId {0}", ex.Message);
+                }
+                catch(System.Exception ex)
+                {
+                    this.acDoc.Editor.WriteMessage("Failed List ObjectId {0}", ex.Message);
                 }
             }
             return items;

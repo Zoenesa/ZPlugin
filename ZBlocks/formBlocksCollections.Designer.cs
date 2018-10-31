@@ -23,9 +23,9 @@
             this.radDropDownButtonSelectionList = new Telerik.WinControls.UI.RadDropDownButton();
             this.radMenuItemCek = new Telerik.WinControls.UI.RadMenuItem();
             this.radMenuItemUncek = new Telerik.WinControls.UI.RadMenuItem();
+            this.radMenuUncekSelected = new Telerik.WinControls.UI.RadMenuItem();
             this.radCheckedListBlocks = new Telerik.WinControls.UI.RadCheckedListBox();
             this.radStatusStrip = new Telerik.WinControls.UI.RadStatusStrip();
-            this.radMenuUncekSelected = new Telerik.WinControls.UI.RadMenuItem();
             this.tableLayout.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.radTextSearchBlocks)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.radLblSearch)).BeginInit();
@@ -184,6 +184,12 @@
             this.radMenuItemUncek.Text = "&Uncheck All";
             this.radMenuItemUncek.Click += new System.EventHandler(this.radMenuItemUncek_Click);
             // 
+            // radMenuUncekSelected
+            // 
+            this.radMenuUncekSelected.Name = "radMenuUncekSelected";
+            this.radMenuUncekSelected.Text = "Uncheck &Selected Items";
+            this.radMenuUncekSelected.Click += new System.EventHandler(this.radMenuUncekSelected_Click);
+            // 
             // radCheckedListBlocks
             // 
             this.tableLayout.SetColumnSpan(this.radCheckedListBlocks, 4);
@@ -208,12 +214,6 @@
             this.radStatusStrip.Size = new System.Drawing.Size(483, 24);
             this.radStatusStrip.SizingGrip = false;
             this.radStatusStrip.TabIndex = 1;
-            // 
-            // radMenuUncekSelected
-            // 
-            this.radMenuUncekSelected.Name = "radMenuUncekSelected";
-            this.radMenuUncekSelected.Text = "Uncheck &Selected Items";
-            this.radMenuUncekSelected.Click += new System.EventHandler(this.radMenuUncekSelected_Click);
             // 
             // formBlocksCollections
             // 
