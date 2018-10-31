@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
+using Autodesk.AutoCAD.Runtime;
 using AcAp = Autodesk.AutoCAD.ApplicationServices;
 
 public class BlockATPOINT
@@ -32,8 +33,9 @@ public class BlockATPOINT
         this._document = document;
         this.database = document.Database;
         this._dataTable = new System.Data.DataTable();
-        this._dataTable.Columns.Add("ObjectID", typeof(string));
+        this._dataTable.Columns.Add("ObjectID", typeof(ObjectId));
         this._dataTable.Columns.Add("BRefName", typeof(string));
+        this._dataTable.Columns.Add("AcBref", typeof(AcBlockReferences));
         this._dataTable.Columns.Add("Type", typeof(string));
         this._dataTable.Columns.Add("AttRef", typeof(string));
         this._dataTable.Columns.Add("Nested", typeof(string));
@@ -79,7 +81,7 @@ public class BlockATPOINT
         //this.vmethod_1(0, "Getting document blocks...", null, false);
         List<AcBlockReferences> ListBlockRef = new List<AcBlockReferences>();
         Transaction transaction = null;
-        string[] arr = new string[3];
+        object[] arr = new object[] { typeof(ObjectId), typeof(string), typeof(AcBlockReferences), typeof(string), typeof(string), typeof(string) };
         try
         {
             using (DocumentLock documentLock = Cur_Doc.LockDocument())
@@ -129,19 +131,20 @@ public class BlockATPOINT
                                     AcBlockAttributes class3 = new AcBlockAttributes(blockReference, attributeReferences);
                                     if (!class3.bool_0)
                                     {
-                                        class0.list_2.Add(class3);
+                                        class0.ListBlkAtt2.Add(class3);
                                     }
                                     else
                                     {
-                                        class0.list_1.Add(class3);
+                                        class0.ListBlkAtt1.Add(class3);
                                     }
                                 }
                             }
                         }
                         ListBlockRef.Add(class0);
-                        arr[0] = class0.objectId_0.ToString();
-                        arr[1] = class0.Bref_Name.ToString();
-                        arr[2] = class0.GetType().ToString();
+                        arr[0] = class0.objectId_0;
+                        arr[1] = class0.Bref_Name;
+                        arr[2] = class0;
+                        arr[3] = class0.GetType().ToString();
                         this._dataTable.Rows.Add(arr);
                     }
                     transaction.Abort();
