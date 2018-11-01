@@ -35,7 +35,7 @@ using System.Threading.Tasks;
             this.isBlockRefVisible = blockReference_0.Visible;
         }
 
-        internal string method_0(bool bool_2)
+        internal string ParseAttributeRefsValue(bool bool_2)
         {
             string empty = string.Empty;
             foreach (AttributeReference attref in this.List_AttRef)

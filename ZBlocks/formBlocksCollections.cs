@@ -81,9 +81,6 @@ namespace ZBlocks
                 this.acDoc = AcAp.Application.DocumentManager.MdiActiveDocument;
                 this.Text = string.Format("Block Collections - {0}{1}{2}", "{", System.IO.Path.GetFileName(this.document.Name), "}");
                 
-                block = new BlockATPOINT(this.acDoc);
-                list_BlkRefs = new List<AcBlockReferences>();
-                list_BlkRefs = block.GetBlockReferences();
                 try
                 {
                     string[] str = (from name in list_BlkRefs select name.Bref_Name).ToArray();
@@ -93,6 +90,7 @@ namespace ZBlocks
                     radCheckedListBlocks.DisplayMember = "BrefName";
                     radCheckedListBlocks.ValueMember = "AcBref";
 
+                    
                 }
                 catch
                 {
@@ -104,6 +102,11 @@ namespace ZBlocks
         {
             if (this.acDoc != null && !this.acDoc.IsDisposed)
             {
+
+                block = new BlockATPOINT(this.acDoc);
+                list_BlkRefs = new List<AcBlockReferences>();
+                list_BlkRefs = block.GetBlockReferences();
+
                 using (Transaction tr = this.acDoc.TransactionManager.StartTransaction())
                 {
                     BlockTableRecord[] btrs
@@ -112,8 +115,72 @@ namespace ZBlocks
                     List<string> btrsName = (from br in btrs select br.Name).ToList<string>();
                     
                 }
+                block.DataTable.TableName = "DataBlockDef";
+                block.TableChild.TableName = "BlockRefs";
+                block.DataSet.Tables.Add(block.DataTable);
+                block.DataSet.Tables.Add(block.TableChild);
+                //block.DataSet.Relations.Add("Blocks", block.DataTable.Columns["ObjectID"], block.TableChild.Columns["parentId"]);
+                this.datagrid.MasterTemplate.AutoGenerateHierarchy = true;
+                this.datagrid.MasterTemplate.AutoGenerateColumns = false;
+                
+                this.datagrid.MasterTemplate.DataSource = CustomSource("BlocksCollections");
+                this.datagrid.Relations.AddSelfReference(this.datagrid.MasterTemplate, "column1", "column2");
+                this.datagrid.Columns[0].IsVisible = false;
+                this.datagrid.Columns[1].IsVisible = false;
+                this.datagrid.MasterTemplate.EnableAlternatingRowColor = true;
+                this.datagrid.MasterTemplate.BestFitColumns(BestFitColumnMode.AllCells);
             }
+        }
 
+        System.Data.DataTable CustomSource(string Name)
+        {
+            System.Data.DataTable dt = new System.Data.DataTable(Name);
+            dt.Columns.Add("Id", typeof(Int64));
+            dt.Columns.Add("ParentId", typeof(Int64));
+            dt.Columns.Add("BlockName", typeof(string));
+            dt.Columns.Add("Attr", typeof(string));
+            object[] arr = new object[] { typeof(Int64), typeof(Int64), typeof(string), typeof(string) };
+            bool _ParentAdded = false;
+            foreach (AcBlockReferences refs in list_BlkRefs)
+            {
+                if (refs.HasAttribute)
+                {
+                    if (!_ParentAdded)
+                    {
+                        arr[0] = refs.objectId_0.ConvertObjectId();
+                        arr[1] = null;
+                        arr[2] = refs.Bref_Name;
+                        string str = "";
+                        foreach (AttributeDefinition def in refs.ListAttDefs)
+                        {
+                            str = string.Format("{0} {1}; ", str, def.Tag);
+                        }
+                        str = str.Trim(new[] { ' ', ';' });
+                        arr[3] = str;
+                        dt.Rows.Add(arr);
+                        _ParentAdded = true;
+                    }
+
+                    foreach (AcBlockAttributes bat in refs.ListBlkAtt1)
+                    {
+                        arr[0] = bat.BlockRefId.ConvertObjectId();
+                        arr[1] = refs.objectId_0.ConvertObjectId();
+                        arr[2] = bat.BlockRefName;
+                        arr[3] = bat.ParseAttributeRefsValue(true);
+                        dt.Rows.Add(arr);
+                    }
+                }
+                else
+                {
+                    arr[0] = refs.objectId_0.ConvertObjectId();
+                    arr[1] = null;
+                    arr[2] = refs.Bref_Name;
+                    arr[3] = "";
+                    dt.Rows.Add(arr);
+                }
+                _ParentAdded = false;
+            }
+            return dt;
         }
 
         private void RadTextSearchBlocks_TextChanged(object sender, EventArgs e)

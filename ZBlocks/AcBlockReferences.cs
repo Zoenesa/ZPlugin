@@ -9,6 +9,8 @@ public class AcBlockReferences
 {
     internal ObjectId objectId_0;
 
+    internal ObjectId BlockTableId;
+
     internal string Bref_Name;
 
     internal List<AttributeDefinition> ListAttDefs;
@@ -17,6 +19,8 @@ public class AcBlockReferences
 
     internal List<AcBlockAttributes> ListBlkAtt2;
 
+    internal readonly bool HasAttribute;
+    
     internal AcBlockReferences(ObjectId objectId_1, string string_1, List<AttributeDefinition> list_3)
     {
         this.objectId_0 = objectId_1;
@@ -24,6 +28,16 @@ public class AcBlockReferences
         this.ListAttDefs = list_3;
         this.ListBlkAtt1 = new List<AcBlockAttributes>();
         this.ListBlkAtt2 = new List<AcBlockAttributes>();
+    }
+
+    internal AcBlockReferences(ObjectId objectId_1, string string_1, List<AttributeDefinition> list_3, bool hasRefs)
+    {
+        this.objectId_0 = objectId_1;
+        this.Bref_Name = string_1;
+        this.ListAttDefs = list_3;
+        this.ListBlkAtt1 = new List<AcBlockAttributes>();
+        this.ListBlkAtt2 = new List<AcBlockAttributes>();
+        this.HasAttribute = hasRefs;
     }
 
     internal AttributeDefinition method_0(string string_1)

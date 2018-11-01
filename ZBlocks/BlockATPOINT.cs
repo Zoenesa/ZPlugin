@@ -8,6 +8,7 @@ using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Runtime;
 using AcAp = Autodesk.AutoCAD.ApplicationServices;
+using ZTools;
 
 public class BlockATPOINT
 {
@@ -28,18 +29,28 @@ public class BlockATPOINT
 
     public System.Data.DataTable DataTable { get { return _dataTable; } }
 
+    public System.Data.DataSet DataSet;
+    public System.Data.DataTable TableChild;
+
     public BlockATPOINT(Document document)
     {
         this._document = document;
         this.database = document.Database;
         this._dataTable = new System.Data.DataTable();
-        this._dataTable.Columns.Add("ObjectID", typeof(ObjectId));
+        this._dataTable.Columns.Add("ObjectID", typeof(Int64));
         this._dataTable.Columns.Add("BRefName", typeof(string));
         this._dataTable.Columns.Add("AcBref", typeof(AcBlockReferences));
         this._dataTable.Columns.Add("Type", typeof(string));
         this._dataTable.Columns.Add("AttRef", typeof(string));
         this._dataTable.Columns.Add("Nested", typeof(string));
 
+        TableChild = new System.Data.DataTable();
+        TableChild.Columns.Add("Id", typeof(Int64));
+        TableChild.Columns.Add("ParentId", typeof(Int64));
+        //TableChild.Columns.Add("BObjectId", typeof(ObjectId));
+        //TableChild.Columns.Add("PObjectId", typeof(ObjectId));
+        TableChild.Columns.Add("BlockName", typeof(string));
+        TableChild.Columns.Add("Attr", typeof(string));
     }
 
     public BlockATPOINT(string ExternalFile)
@@ -81,7 +92,14 @@ public class BlockATPOINT
         //this.vmethod_1(0, "Getting document blocks...", null, false);
         List<AcBlockReferences> ListBlockRef = new List<AcBlockReferences>();
         Transaction transaction = null;
-        object[] arr = new object[] { typeof(ObjectId), typeof(string), typeof(AcBlockReferences), typeof(string), typeof(string), typeof(string) };
+        object[] arr = new object[] { typeof(Int64), typeof(string), typeof(AcBlockReferences), typeof(string), typeof(string), typeof(string) };
+        object[] arrChild = new object[] {
+            typeof(Int64),
+            typeof(Int64),
+            typeof(string),
+            typeof(string) };
+        this.DataSet = new DataSet("BlockDataSet");
+        bool _flagAttributes = false;
         try
         {
             using (DocumentLock documentLock = Cur_Doc.LockDocument())
@@ -97,20 +115,17 @@ public class BlockATPOINT
                         {
                             continue;
                         }
-                        List<AttributeDefinition> attributeDefinitions = new List<AttributeDefinition>();
-                        if (blockTableRecords.HasAttributeDefinitions)
-                        {
-                            foreach (ObjectId objectId in blockTableRecords)
-                            {
-                                DBObject dBObject = transaction.GetObject(objectId, OpenMode.ForRead, true, true);
-                                if (dBObject.IsErased || !(dBObject is AttributeDefinition))
-                                {
-                                    continue;
-                                }
-                                attributeDefinitions.Add(dBObject as AttributeDefinition);
-                            }
-                        }
-                        AcBlockReferences class0 = new AcBlockReferences(obj, blockTableRecords.Name, attributeDefinitions);
+
+                        List<AttributeDefinition> attributeDefinitions = ListAttributeDefinitions(blockTableRecords, transaction1);
+                       
+
+                        AcBlockReferences acBrefs = new AcBlockReferences(obj, blockTableRecords.Name, attributeDefinitions, blockTableRecords.HasAttributeDefinitions);
+                        acBrefs.BlockTableId = blockTableRecords.Id;
+                        string ids = acBrefs.BlockTableId.ToString().Trim(new[] { '{', '(', ')', '}' });
+
+                        arrChild[0] = ids;
+                        //arrChild[1] = null;
+                        arrChild[2] = acBrefs.Bref_Name;
                         foreach (ObjectId blockReferenceId in blockTableRecords.GetBlockReferenceIds(true, true))
                         {
                             using (BlockReference blockReference = transaction.GetObject(blockReferenceId, OpenMode.ForRead, true, true) as BlockReference)
@@ -128,24 +143,34 @@ public class BlockATPOINT
                                         attributeReferences.Add(attributeReference);
                                     }
                                     //List BlockReference
-                                    AcBlockAttributes class3 = new AcBlockAttributes(blockReference, attributeReferences);
-                                    if (!class3.bool_0)
+                                    AcBlockAttributes acBatt = new AcBlockAttributes(blockReference, attributeReferences);
+                                    if (!acBatt.bool_0)
                                     {
-                                        class0.ListBlkAtt2.Add(class3);
+                                        acBrefs.ListBlkAtt2.Add(acBatt);
                                     }
                                     else
                                     {
-                                        class0.ListBlkAtt1.Add(class3);
+                                        acBrefs.ListBlkAtt1.Add(acBatt);
+                                        //arrChild[1] = class3.BlockRefId.ToString().Trim(new[] { '{', '(', ')', '}' });
+                                        arrChild[1] = blockReferenceId.ConvertObjectId();
+                                        arrChild[3] = acBatt.ParseAttributeRefsValue(true);
+                                        _flagAttributes = true;
                                     }
+                                    TableChild.Rows.Add(arrChild);
                                 }
                             }
                         }
-                        ListBlockRef.Add(class0);
-                        arr[0] = class0.objectId_0;
-                        arr[1] = class0.Bref_Name;
-                        arr[2] = class0;
-                        arr[3] = class0.GetType().ToString();
+                        ListBlockRef.Add(acBrefs);
+                        arr[0] = acBrefs.objectId_0.ConvertObjectId();
+                        arr[1] = acBrefs.Bref_Name + " " + acBrefs.objectId_0.ConvertObjectId();
+                        arr[2] = acBrefs;
+                        arr[3] = acBrefs.GetType().ToString();
                         this._dataTable.Rows.Add(arr);
+                        if (!_flagAttributes)
+                        {
+                            arrChild[1] = null;
+                        }
+                        TableChild.Rows.Add(arrChild);
                     }
                     transaction.Abort();
                     // "Document blocks retrieval complete.", null, false);
@@ -169,4 +194,40 @@ public class BlockATPOINT
         return ListBlockRef;
     }
     
+    List<AttributeDefinition> ListAttributeDefinitions(BlockTableRecord blockTableRecords)
+    {
+        List<AttributeDefinition> list = new List<AttributeDefinition>();
+        if (blockTableRecords.HasAttributeDefinitions)
+        {
+            foreach (ObjectId objectId in blockTableRecords)
+            {
+                DBObject dBObject = transaction.GetObject(objectId, OpenMode.ForRead, true, true);
+                if (dBObject.IsErased || !(dBObject is AttributeDefinition))
+                {
+                    continue;
+                }
+                list.Add(dBObject as AttributeDefinition);
+            }
+        }
+        return list;
+    }
+
+    List<AttributeDefinition> ListAttributeDefinitions(BlockTableRecord blockTableRecords, Transaction transaction)
+    {
+        List<AttributeDefinition> list = new List<AttributeDefinition>();
+        if (blockTableRecords.HasAttributeDefinitions)
+        {
+            foreach (ObjectId objectId in blockTableRecords)
+            {
+                DBObject dBObject = transaction.GetObject(objectId, OpenMode.ForRead, true, true);
+                if (dBObject.IsErased || !(dBObject is AttributeDefinition))
+                {
+                    continue;
+                }
+                list.Add(dBObject as AttributeDefinition);
+            }
+        }
+        return list;
+    }
+
 }
