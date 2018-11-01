@@ -76,7 +76,6 @@
       <DependentUpon>formBlocksCollections.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ZListBlockItem.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="formBlocksCollections.resx">
