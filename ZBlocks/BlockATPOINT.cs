@@ -117,7 +117,7 @@ public class BlockATPOINT
                         }
 
                         List<AttributeDefinition> attributeDefinitions = ListAttributeDefinitions(blockTableRecords, transaction1);
-                       
+
 
                         AcBlockReferences acBrefs = new AcBlockReferences(obj, blockTableRecords.Name, attributeDefinitions, blockTableRecords.HasAttributeDefinitions);
                         acBrefs.BlockTableId = blockTableRecords.Id;
@@ -162,7 +162,7 @@ public class BlockATPOINT
                         }
                         ListBlockRef.Add(acBrefs);
                         arr[0] = acBrefs.objectId_0.ConvertObjectId();
-                        arr[1] = acBrefs.Bref_Name + " " + acBrefs.objectId_0.ConvertObjectId();
+                        arr[1] = string.Format("{0} {2}{1}{3}", acBrefs.Bref_Name, acBrefs.objectId_0.ConvertObjectId(), "{", "}");
                         arr[2] = acBrefs;
                         arr[3] = acBrefs.GetType().ToString();
                         this._dataTable.Rows.Add(arr);
