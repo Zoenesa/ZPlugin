@@ -66,12 +66,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="ZCheckedListBox.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ZCheckedListBox.Designer.cs">
-      <DependentUpon>ZCheckedListBox.cs</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="AcTitleBar.resx">
@@ -84,9 +78,6 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ZCheckedListBox.resx">
-      <DependentUpon>ZCheckedListBox.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
