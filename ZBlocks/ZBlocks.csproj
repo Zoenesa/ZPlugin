@@ -54,14 +54,16 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="Telerik.WinControls, Version=2018.3.911.40, Culture=neutral, PublicKeyToken=5bb2a467cbec794e">
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
-    <Reference Include="Telerik.WinControls.GridView, Version=2018.3.911.40, Culture=neutral, PublicKeyToken=5bb2a467cbec794e, processorArchitecture=MSIL" />
+    <Reference Include="Telerik.WinControls.GridView, Version=2018.3.911.40, Culture=neutral, PublicKeyToken=5bb2a467cbec794e, processorArchitecture=MSIL">
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Telerik.WinControls.UI, Version=2018.3.911.40, Culture=neutral, PublicKeyToken=5bb2a467cbec794e, processorArchitecture=MSIL">
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
     <Reference Include="TelerikCommon, Version=2018.3.911.40, Culture=neutral, PublicKeyToken=5bb2a467cbec794e">
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -87,10 +89,12 @@
     <ProjectReference Include="..\ZControl\ZControl.csproj">
       <Project>{6c214697-7dfc-4d42-8bf3-8da28e6e6603}</Project>
       <Name>ZControl</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\ZTools\ZTools.csproj">
       <Project>{83bd2382-9fb3-43c9-8e92-783fd5e57c35}</Project>
       <Name>ZTools</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

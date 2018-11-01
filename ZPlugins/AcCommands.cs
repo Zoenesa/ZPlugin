@@ -20,7 +20,7 @@ namespace AcZPlugins
         {
             this.document = AcAP.Application.DocumentManager.MdiActiveDocument;
             this.editor = document.Editor;
-            //LoadAssembly();
+            LoadAssembly();
             string[] strInit = new string[]
             {
                 "\n",

@@ -61,10 +61,12 @@
     <ProjectReference Include="..\ZBlockControls\ZPointControls.csproj">
       <Project>{04726382-e998-4535-87e5-7518b3e506a7}</Project>
       <Name>ZPointControls</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\ZBlocks\ZBlocks.csproj">
       <Project>{b15037e6-e228-4c16-95a1-ecbf43059610}</Project>
       <Name>ZBlocks</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -88,16 +90,16 @@
       <FilesToClean Include="$(OutDir)\Ac*.dll" />
       <FilesToClean Include="$(OutDir)\Ad*.dll" />
       <FilesToClean Include="$(OutDir)\*.dwl*" />
-      <!--
       <FilesToClean Include="$(OutDir)\Tel*.dll" />
-		<FilesToClean Include="$(OutDir)\AcCoreMgd.dll" />
-		<FilesToClean Include="$(OutDir)\AcDbMgd.dll" />
-		<FilesToClean Include="$(OutDir)\AcMgd.dll" />
-		<FilesToClean Include="$(OutDir)\AcCui.dll" />
-		<FilesToClean Include="$(OutDir)\AcTcMgd.dll" />
-		<FilesToClean Include="$(OutDir)\AdUIMgd.dll" />
-		<FilesToClean Include="$(OutDir)\AdUiPalettes.dll" />
-		<FilesToClean Include="$(OutDir)\AdWindows.dll" /> 
+      <FilesToClean Include="$(OutDir)\AcCoreMgd.dll" />
+      <FilesToClean Include="$(OutDir)\AcDbMgd.dll" />
+      <FilesToClean Include="$(OutDir)\AcMgd.dll" />
+      <FilesToClean Include="$(OutDir)\AcCui.dll" />
+      <FilesToClean Include="$(OutDir)\AcTcMgd.dll" />
+      <FilesToClean Include="$(OutDir)\AdUIMgd.dll" />
+      <FilesToClean Include="$(OutDir)\AdUiPalettes.dll" />
+      <FilesToClean Include="$(OutDir)\AdWindows.dll" />
+      <!--
     Bit of .Net to get all folders and subfolders 
 		<FoldersToClean Include="$([System.IO.Directory]::GetDirectories(&quot;$(OutDir)&quot;))" />
 		-->
