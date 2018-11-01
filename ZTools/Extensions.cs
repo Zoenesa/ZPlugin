@@ -73,6 +73,11 @@ namespace ZTools
             }
         }
 
+        public static object ConvertObjectId(this ObjectId objectId)
+        {
+            return objectId.ToString().Trim(new[] { '{', '(', ')', '}' });
+        }
+
         // Opens a DBObject in ForRead mode (kaefer @ TheSwamp)
         public static T GetObject<T>(this ObjectId id) where T : DBObject
         {
@@ -366,6 +371,39 @@ namespace ZTools
             }).OrderBy<BlockTableRecord, string>((BlockTableRecord btr) => btr.Name).ToArray<BlockTableRecord>();
         }
 
+        public static BlockTableRecord[] GetBlocksWithAttribute(this Database db, bool SelectXRef)
+        {
+            Func<ObjectId, bool> func2 = null;
+            RXClass @class = RXObject.GetClass(typeof(AttributeDefinition));
+            return db.BlockTableId.GetObject<BlockTable>().GetObjects<BlockTableRecord>().Where<BlockTableRecord>((BlockTableRecord btr) => {
+                if (SelectXRef)
+                {
+                    if (btr.IsLayout || btr.IsAnonymous)
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    if (btr.IsLayout || btr.IsAnonymous || btr.IsFromExternalReference || btr.IsFromOverlayReference)
+                    {
+                        return false;
+                    }
+                }
+
+                IEnumerable<ObjectId> objectIds = btr.Cast<ObjectId>();
+                Func<ObjectId, bool> f = func2;
+                if (f == null)
+                {
+                    Func<ObjectId, bool> func = (ObjectId id) => id.ObjectClass.IsDerivedFrom(@class);
+                    Func<ObjectId, bool> func1 = func;
+                    func2 = func;
+                    f = func1;
+                }
+                return objectIds.Any<ObjectId>(f);
+            }).OrderBy<BlockTableRecord, string>((BlockTableRecord btr) => btr.Name).ToArray<BlockTableRecord>();
+        }
+
         public static int IndexOf(this BlockTableRecord btr, AttributeDefinition attDef)
         {
             return (
@@ -378,7 +416,7 @@ namespace ZTools
         {
             br.AttributeCollection[index].GetObject<AttributeReference>(OpenMode.ForWrite).TextString = value;
         }
-
+        
         public class TextInfo
         {
             public Point3d Alignment
